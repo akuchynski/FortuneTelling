@@ -4,7 +4,6 @@ import java.util.Random;
 
 import by.htp.prediction.bean.Chamomile;
 import by.htp.prediction.bean.FortuneTeller;
-import by.htp.prediction.bean.Petal;
 import by.htp.prediction.bean.Prediction;
 
 public class PredictionService {
@@ -35,27 +34,16 @@ public class PredictionService {
 
 	public void getNewChamomiles(FortuneTeller forteller) {
 		Random random = new Random();
-		int n = random.nextInt(5) + 5;
-		for (int i = 0; i < n; i++) {
-			int petalCount = random.nextInt(5) + 5;
-			forteller.getChamList().add(getOneChamomile(petalCount));
+		int chamCount = random.nextInt(5) + 5;
+		for (int i = 0; i < chamCount; i++) {	
+			Chamomile chamomile = new Chamomile();
+			forteller.getChamList().add(chamomile);
 		}
 	}
 
-	public Chamomile getOneChamomile(int petalCount) {
-		Chamomile chamomile = new Chamomile();
-		for (int i = 0; i < petalCount; i++) {
-			Petal petal = new Petal();
-			petal.setNumber(i + 1);
-			chamomile.getPetals().add(petal);
-		}
-		chamomile.setPetalCount(chamomile.getPetals().size());
-		return chamomile;
-	}
-
-	public void viewChamomilesList(FortuneTeller fortel) {
+	public void viewChamomilesList(FortuneTeller forteller) {
 		System.out.println("Chamomiles List:");
-		for (Chamomile chamomile : fortel.getChamList()) {
+		for (Chamomile chamomile : forteller.getChamList()) {
 			System.out.println("[" + chamomile.getPetals().size() + "]");
 		}
 	}

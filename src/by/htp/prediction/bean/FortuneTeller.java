@@ -10,9 +10,21 @@ public class FortuneTeller {
 
 	private String name;
 	private boolean mood;
-	private Set<Client> clientSet = new LinkedHashSet<>();
-	private Set<Prediction> predSet = new LinkedHashSet<>();
-	private List<Chamomile> chamList = new ArrayList<>();
+	private Set<Client> clientSet;
+	private Set<Prediction> predSet;
+	private List<Chamomile> chamList;
+
+	public FortuneTeller() {
+		super();
+	}
+
+	public FortuneTeller(String name) {
+		super();
+		this.name = name;
+		this.clientSet = new LinkedHashSet<>();
+		this.predSet = new LinkedHashSet<>();
+		this.chamList = new ArrayList<>();
+	}
 
 	public String getName() {
 		return name;
@@ -54,71 +66,47 @@ public class FortuneTeller {
 		this.chamList = chamList;
 	}
 
-	public FortuneTeller() {
-		super();
-	}
-
-	public FortuneTeller(String name) {
-		super();
-		this.name = name;
-	}
-
 	public void getPrediction(Client client) {
+		Prediction prediction;
 
 		if (isNoMood()) {
 			System.out.println("No more chamomiles :(((");
 			return;
 		}
 		
-		if(client.getDate() != null){
-			Date curTime = getCurrentTime();
-			long deltaTime = (curTime.getTime() - client.getDate().getTime())/1000;
-			if(deltaTime < 24){
-				System.out.println(client.getName() + ": ask a new question after " + (24-deltaTime) + " hours!");
-				return;
-			}
+		if(checkLastDate(client)){
+			System.out.println(client.getName() + ": ask a new question after 24h!");
+			return;
 		}
 		
+		prediction = findPrediction(client);
 		
-		Prediction prediction = findPrediction(client);
-
-		if (prediction != null) {
+		if (prediction.getTitle() != null) {
 			Chamomile chamomile = chamList.get(0);
-			int k = -1;
-			for (int i = 0; i < chamomile.getPetalCount(); i++) {
-				if (k < prediction.getAnswers().size() - 1) {
-					k++;
-				} else {
-					k = 0;
-				}
-				chamomile.getPetals().remove(0);
+			int answerNum = chamomile.getPetals().size() % prediction.getAnswers().size();
+			if (answerNum != 0) {
+				answerNum = answerNum - 1;
 			}
-
-			client.setDate(getCurrentTime());
-			clientSet.add(client);
-			System.out.println(client.getName() + ": " + prediction.getAnswers().get(k));
-			
+			chamomile.getPetals().remove(0);
+			System.out.println(client.getName() + ": " + prediction.getAnswers().get(answerNum));
 			chamList.remove(0);
-
 		} else {
-			
-			client.setDate(getCurrentTime());
-			clientSet.add(client);
 			System.out.println(client.getName() + ": No answer for that question!");
-			
 		}
+		clientSet.add(client);
 	}
 
-	public Prediction findPrediction(Client client) {
+	private Prediction findPrediction(Client client) {
+		Prediction temp = new Prediction();
 		for (Prediction prediction : predSet) {
 			if (prediction.getTitle().equals(client.getQuestion())) {
 				return prediction;
 			}
 		}
-		return null;
+		return temp;
 	}
 
-	public boolean isNoMood() {
+	private boolean isNoMood() {
 		if (chamList.isEmpty()) {
 			mood = true;
 		} else {
@@ -127,8 +115,72 @@ public class FortuneTeller {
 		return mood;
 	}
 	
-	public Date getCurrentTime() {
+	private boolean checkLastDate(Client client) {
+		if (client.getDate() == null){
+			client.setDate(getCurrentTime());
+		} else {
+			long deltaTime = (getCurrentTime().getTime() - client.getDate().getTime()) / 1000;
+			if (deltaTime < 24) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Date getCurrentTime() {
 		long curTime = System.currentTimeMillis();
 		return new Date(curTime);
+	}
+
+	@Override
+	public String toString() {
+		return "FortuneTeller [name=" + name + ", mood=" + mood + ", clientSet=" + clientSet + ", predSet=" + predSet
+				+ ", chamList=" + chamList + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((chamList == null) ? 0 : chamList.hashCode());
+		result = prime * result + ((clientSet == null) ? 0 : clientSet.hashCode());
+		result = prime * result + (mood ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((predSet == null) ? 0 : predSet.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FortuneTeller other = (FortuneTeller) obj;
+		if (chamList == null) {
+			if (other.chamList != null)
+				return false;
+		} else if (!chamList.equals(other.chamList))
+			return false;
+		if (clientSet == null) {
+			if (other.clientSet != null)
+				return false;
+		} else if (!clientSet.equals(other.clientSet))
+			return false;
+		if (mood != other.mood)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (predSet == null) {
+			if (other.predSet != null)
+				return false;
+		} else if (!predSet.equals(other.predSet))
+			return false;
+		return true;
 	}
 }
