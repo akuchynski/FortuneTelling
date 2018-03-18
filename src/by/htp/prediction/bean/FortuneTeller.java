@@ -67,64 +67,60 @@ public class FortuneTeller {
 	}
 
 	public void getPrediction(Client client) {
-		Prediction prediction;
-
 		if (isNoMood()) {
 			System.out.println("No more chamomiles :(((");
-			return;
-		}
-		
-		if(checkLastDate(client)){
-			System.out.println(client.getName() + ": ask a new question after 24h!");
-			return;
-		}
-		
-		prediction = findPrediction(client);
-		
-		if (prediction.getTitle() != null) {
-			Chamomile chamomile = chamList.get(0);
-			int answerNum = chamomile.getPetals().size() % prediction.getAnswers().size();
-			if (answerNum != 0) {
-				answerNum = answerNum - 1;
-			}
-			chamomile.getPetals().remove(0);
-			System.out.println(client.getName() + ": " + prediction.getAnswers().get(answerNum));
-			chamList.remove(0);
 		} else {
-			System.out.println(client.getName() + ": No answer for that question!");
-		}
-		clientSet.add(client);
-	}
-
-	private Prediction findPrediction(Client client) {
-		Prediction temp = new Prediction();
-		for (Prediction prediction : predSet) {
-			if (prediction.getTitle().equals(client.getQuestion())) {
-				return prediction;
+			if (checkLastDate(client)) {
+				System.out.println(client.getName() + ": Ask a new question after 24h!");
+				return;
 			}
+			getAnswer(client);
+			clientSet.add(client);
 		}
-		return temp;
 	}
 
 	private boolean isNoMood() {
 		if (chamList.isEmpty()) {
 			mood = true;
-		} else {
-			mood = false;
 		}
 		return mood;
 	}
-	
+
 	private boolean checkLastDate(Client client) {
-		if (client.getDate() == null){
+		if (client.getDate() == null) {
 			client.setDate(getCurrentTime());
 		} else {
-			long deltaTime = (getCurrentTime().getTime() - client.getDate().getTime()) / 1000;
-			if (deltaTime < 24) {
+			long deltaTime = (getCurrentTime().getTime() - client.getDate().getTime()) / 86400000;
+			if (deltaTime < 1) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private void getAnswer(Client client) {
+		Prediction prediction = findPrediction(client);
+		if (prediction.getTitle() != null) {
+			Chamomile chamomile = chamList.get(0);
+			int answerNum = chamomile.getPetals().size() % prediction.getAnswers().size();
+			if (answerNum == 0) {
+				answerNum = prediction.getAnswers().size();
+			}
+			chamomile.getPetals().remove(0);
+			System.out.println(client.getName() + ": " + prediction.getAnswers().get(answerNum-1));
+			chamList.remove(0);
+		} else {
+			System.out.println(client.getName() + ": No answer for that question!");
+		}
+	}
+
+	private Prediction findPrediction(Client client) {
+		for (Prediction prediction : predSet) {
+			if (prediction.getTitle().equals(client.getQuestion())) {
+				return prediction;
+			}
+		}
+		return new Prediction();
 	}
 
 	private Date getCurrentTime() {
