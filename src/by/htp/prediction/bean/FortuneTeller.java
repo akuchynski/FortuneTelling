@@ -65,6 +65,58 @@ public class FortuneTeller {
 	public void setChamList(List<Chamomile> chamList) {
 		this.chamList = chamList;
 	}
+	
+	@Override
+	public String toString() {
+		return "FortuneTeller [name=" + name + ", mood=" + mood + ", clientSet=" + clientSet + ", predSet=" + predSet
+				+ ", chamList=" + chamList + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((chamList == null) ? 0 : chamList.hashCode());
+		result = prime * result + ((clientSet == null) ? 0 : clientSet.hashCode());
+		result = prime * result + (mood ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((predSet == null) ? 0 : predSet.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FortuneTeller other = (FortuneTeller) obj;
+		if (chamList == null) {
+			if (other.chamList != null)
+				return false;
+		} else if (!chamList.equals(other.chamList))
+			return false;
+		if (clientSet == null) {
+			if (other.clientSet != null)
+				return false;
+		} else if (!clientSet.equals(other.clientSet))
+			return false;
+		if (mood != other.mood)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (predSet == null) {
+			if (other.predSet != null)
+				return false;
+		} else if (!predSet.equals(other.predSet))
+			return false;
+		return true;
+	}
 
 	public void getPrediction(Client client) {
 		if (isNoMood()) {
@@ -126,57 +178,5 @@ public class FortuneTeller {
 	private Date getCurrentTime() {
 		long curTime = System.currentTimeMillis();
 		return new Date(curTime);
-	}
-
-	@Override
-	public String toString() {
-		return "FortuneTeller [name=" + name + ", mood=" + mood + ", clientSet=" + clientSet + ", predSet=" + predSet
-				+ ", chamList=" + chamList + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((chamList == null) ? 0 : chamList.hashCode());
-		result = prime * result + ((clientSet == null) ? 0 : clientSet.hashCode());
-		result = prime * result + (mood ? 1231 : 1237);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((predSet == null) ? 0 : predSet.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FortuneTeller other = (FortuneTeller) obj;
-		if (chamList == null) {
-			if (other.chamList != null)
-				return false;
-		} else if (!chamList.equals(other.chamList))
-			return false;
-		if (clientSet == null) {
-			if (other.clientSet != null)
-				return false;
-		} else if (!clientSet.equals(other.clientSet))
-			return false;
-		if (mood != other.mood)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (predSet == null) {
-			if (other.predSet != null)
-				return false;
-		} else if (!predSet.equals(other.predSet))
-			return false;
-		return true;
 	}
 }

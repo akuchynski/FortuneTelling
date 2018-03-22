@@ -21,16 +21,6 @@ public class Chamomile {
 	public void setPetals(List<Petal> petals) {
 		this.petals = petals;
 	}
-	
-	private void generatePetals() {
-		Random random = new Random();
-		int petalCount = random.nextInt(5) + 5;
-		for (int i = 0; i < petalCount; i++) {
-			Petal petal = new Petal();
-			petal.setNumber(i + 1);
-			this.petals.add(petal);
-		}
-	}
 
 	@Override
 	public String toString() {
@@ -60,5 +50,15 @@ public class Chamomile {
 		} else if (!petals.equals(other.petals))
 			return false;
 		return true;
+	}
+	
+	private void generatePetals() {
+		Random random = new Random();
+		int petalCount = random.nextInt(5) + 5;
+		for (int i = 0; i < petalCount; i++) {
+			Petal petal = new Petal();
+			petal.setNumber(i + 1);
+			this.petals.add(petal);
+		}
 	}
 }
